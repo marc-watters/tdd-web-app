@@ -82,3 +82,10 @@ func assertResponseBody(t testing.TB, got, want string) {
 		t.Errorf("\ngot: \t%q\nwant:\t%q", got, want)
 	}
 }
+
+func assertStatusCode(t testing.TB, got, want int) {
+	t.Helper()
+	if got != want {
+		t.Errorf("\ngot: \t%d\nwant:\t%d", got, want)
+	}
+}
