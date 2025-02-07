@@ -16,5 +16,14 @@ func PlayerServer(w http.ResponseWriter, r *http.Request) {
 	if player == "Floyd" {
 		fmt.Fprint(w, "10")
 		return
+func GetPlayerScore(player string) (score string) {
+	switch player {
+	case "Pepper":
+		score = "20"
+	case "Floyd":
+		score = "10"
+	default:
+		score = ""
 	}
+	return
 }
