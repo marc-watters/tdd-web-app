@@ -7,6 +7,9 @@ import (
 )
 
 func PlayerServer(w http.ResponseWriter, r *http.Request) {
+type PlayerStore interface {
+	GetPlayerScore(name string) int
+}
 	player := strings.TrimPrefix(r.URL.Path, "/players/")
 	fmt.Fprint(w, GetPlayerScore(player))
 }
