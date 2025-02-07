@@ -13,18 +13,8 @@ type PlayerStore interface {
 type PlayerServer struct {
 	store PlayerStore
 }
-	player := strings.TrimPrefix(r.URL.Path, "/players/")
-	fmt.Fprint(w, GetPlayerScore(player))
-}
 
-func GetPlayerScore(player string) (score string) {
-	switch player {
-	case "Pepper":
-		score = "20"
-	case "Floyd":
-		score = "10"
-	default:
-		score = ""
-	}
-	return
+func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	player := strings.TrimPrefix(r.URL.Path, "/players/")
+	fmt.Fprint(w, p.store.GetPlayerScore(player))
 }
