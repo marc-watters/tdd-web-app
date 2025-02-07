@@ -17,9 +17,7 @@ func TestGETPlayers(t *testing.T) {
 		got := response.Body.String()
 		want := "20"
 
-		if got != want {
-			t.Errorf("\ngot: \t%q\nwant:\t%q", got, want)
-		}
+		assertResponseBody(t, got, want)
 	})
 
 	t.Run("return Floyd's score", func(t *testing.T) {
@@ -31,9 +29,7 @@ func TestGETPlayers(t *testing.T) {
 		got := response.Body.String()
 		want := "10"
 
-		if got != want {
-			t.Errorf("\ngot: \t%q\nwant:\t%q", got, want)
-		}
+		assertResponseBody(t, got, want)
 	})
 }
 
