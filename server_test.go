@@ -11,6 +11,10 @@ type StubPlayerStore struct {
 	scores map[string]int
 }
 
+func (s *StubPlayerStore) GetPlayerScore(name string) int {
+	return s.scores[name]
+}
+
 func TestGETPlayers(t *testing.T) {
 	server := &PlayerServer{}
 
