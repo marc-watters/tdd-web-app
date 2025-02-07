@@ -8,11 +8,13 @@ import (
 )
 
 func TestGETPlayers(t *testing.T) {
+	server := &PlayerServer{}
+
 	t.Run("return Pepper's score", func(t *testing.T) {
 		request := newGetScoreRequest("Pepper")
 		response := httptest.NewRecorder()
 
-		PlayerServer(response, request)
+		server.ServeHTTP(response, request)
 
 		got := response.Body.String()
 		want := "20"
@@ -24,7 +26,7 @@ func TestGETPlayers(t *testing.T) {
 		request := newGetScoreRequest("Floyd")
 		response := httptest.NewRecorder()
 
-		PlayerServer(response, request)
+		server.ServeHTTP(response, request)
 
 		got := response.Body.String()
 		want := "10"
