@@ -31,3 +31,7 @@ func (p *PlayerServer) showScore(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, score)
 }
+
+func (p *PlayerServer) processWin(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusAccepted)
+}
