@@ -30,13 +30,7 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		got := response.Code
-		want := http.StatusOK
-
-		if got != want {
-			t.Errorf("\ngot: \t%d\nwant:\t%d", got, want)
-		}
-
+		assertStatusCode(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "20")
 	})
 
@@ -46,13 +40,7 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		got := response.Code
-		want := http.StatusOK
-
-		if got != want {
-			t.Errorf("\ngot: \t%d\nwant:\t%d", got, want)
-		}
-
+		assertStatusCode(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "10")
 	})
 
@@ -62,12 +50,7 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		got := response.Code
-		want := http.StatusNotFound
-
-		if got != want {
-			t.Errorf("\ngot: \t%d\nwant:\t%d", got, want)
-		}
+		assertStatusCode(t, response.Code, http.StatusNotFound)
 	})
 }
 
