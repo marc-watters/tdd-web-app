@@ -41,6 +41,20 @@ func TestGETPlayers(t *testing.T) {
 
 		assertResponseBody(t, response.Body.String(), "10")
 	})
+
+	t.Run("return 404 on unknown players", func(t *testing.T) {
+		request := newGetScoreRequest("HeWhoShallNotBeNamed")
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		got := response.Code
+		want := http.StatusNotFound
+
+		if got != want {
+			t.Errorf("\ngot: \t%d\nwant:\t%d", got, want)
+		}
+	})
 }
 
 func newGetScoreRequest(name string) *http.Request {
