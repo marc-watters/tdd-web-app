@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+type StubPlayerStore struct {
+	scores map[string]int
+}
+
 func TestGETPlayers(t *testing.T) {
 	server := &PlayerServer{}
 
