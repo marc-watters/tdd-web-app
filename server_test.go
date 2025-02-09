@@ -126,7 +126,7 @@ func TestLeague(t *testing.T) {
 		store := &StubPlayerStore{nil, nil, wantedLeague}
 		server := NewPlayerServer(store)
 
-		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
+		request := newLeagueRequest()
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -156,6 +156,10 @@ func newPostWinRequest(name string) *http.Request {
 	return req
 }
 
+func newLeagueRequest() *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, "/league", nil)
+	return req
+}
 func assertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
