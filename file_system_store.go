@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"log"
-	"strings"
 )
 
 type FileSystemPlayerStore struct {
@@ -35,10 +35,21 @@ func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
 }
 
 func (f *FileSystemPlayerStore) RecordWin(name string) {
-	database := strings.NewReader(`[
-		{"Name": "Cleo", "Wins": 10},
-		{"Name": "Marc", "Wins": 21}
-	]`)
+	league := f.GetLeague()
 
-	f.database = database
+	for i, player := range league {
+		if player.Name == name {
+			league[i].Wins++
+		}
+	}
+
+	_, err := f.database.Seek(0, io.SeekStart)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = json.NewEncoder(f.database).Encode(league)
+	if err != nil {
+		log.Println(err)
+	}
 }
