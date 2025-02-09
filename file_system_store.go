@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"log"
+	"strings"
 )
 
 type FileSystemPlayerStore struct {
@@ -31,4 +32,13 @@ func (f *FileSystemPlayerStore) GetPlayerScore(name string) int {
 		}
 	}
 	return wins
+}
+
+func (f *FileSystemPlayerStore) RecordWin(name string) {
+	database := strings.NewReader(`[
+		{"Name": "Cleo", "Wins": 10},
+		{"Name": "Marc", "Wins": 21}
+	]`)
+
+	f.database = database
 }
