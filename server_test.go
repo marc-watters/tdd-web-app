@@ -134,10 +134,7 @@ func TestLeague(t *testing.T) {
 
 		got := getLeagueFromResponse(t, response.Body)
 		assertStatusCode(t, response.Code, http.StatusOK)
-
-		if !reflect.DeepEqual(got, wantedLeague) {
-			t.Errorf("\ngot: \t%v\nwant:\t%v", got, wantedLeague)
-		}
+		assertLeague(t, got, wantedLeague)
 	})
 }
 
@@ -176,5 +173,12 @@ func assertStatusCode(t testing.TB, got, want int) {
 	t.Helper()
 	if got != want {
 		t.Errorf("\ngot: \t%d\nwant:\t%d", got, want)
+	}
+}
+
+func assertLeague(t testing.TB, got, want []Player) {
+	t.Helper()
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("\ngot: \t%v\nwant:\t%v", got, want)
 	}
 }
