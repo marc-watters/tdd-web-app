@@ -38,6 +38,7 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
 	err := json.NewEncoder(w).Encode(p.store.GetLeague())
 	if err != nil {
 		log.Println(err)
