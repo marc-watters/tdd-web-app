@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"io"
 	"log"
 )
@@ -11,8 +10,7 @@ type FileSystemPlayerStore struct {
 }
 
 func (f *FileSystemPlayerStore) GetLeague() []Player {
-	var league []Player
-	err := json.NewDecoder(f.database).Decode(&league)
+	league, err := NewLeague(f.database)
 	if err != nil {
 		log.Println(err)
 	}
