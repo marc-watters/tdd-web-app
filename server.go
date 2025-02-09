@@ -16,6 +16,7 @@ type Player struct {
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
+	GetLeague() []Player
 }
 
 type PlayerServer struct {
@@ -37,12 +38,10 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
-	leagueTable := p.getLeagueTable()
-	err := json.NewEncoder(w).Encode(leagueTable)
+	err := json.NewEncoder(w).Encode(p.store.GetLeague())
 	if err != nil {
 		log.Println(err)
 	}
-
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -70,10 +69,4 @@ func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
 func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
 	p.store.RecordWin(player)
 	w.WriteHeader(http.StatusAccepted)
-}
-
-func (p *PlayerServer) getLeagueTable() []Player {
-	return []Player{
-		{"Marc", 20},
-	}
 }
