@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -35,6 +37,14 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
+	leagueTable := []Player{
+		{"Marc", 20},
+	}
+	err := json.NewEncoder(w).Encode(leagueTable)
+	if err != nil {
+		log.Println(err)
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
