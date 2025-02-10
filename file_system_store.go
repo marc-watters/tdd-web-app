@@ -8,7 +8,7 @@ import (
 )
 
 type FileSystemPlayerStore struct {
-	database io.Writer
+	database *json.Encoder
 	league   League
 }
 
@@ -19,7 +19,7 @@ func NewFileSystemPlayerStore(file *os.File) *FileSystemPlayerStore {
 	}
 	league, _ := NewLeague(file)
 	return &FileSystemPlayerStore{
-		database: &tape{file},
+		database: json.NewEncoder(&tape{file}),
 		league:   league,
 	}
 }
@@ -44,8 +44,8 @@ func (f *FileSystemPlayerStore) RecordWin(name string) {
 		f.league = append(f.league, Player{name, 1})
 	}
 
-	err := json.NewEncoder(f.database).Encode(f.league)
+	err := f.database.Encode(f.league)
 	if err != nil {
-		log.Printf("unable to write to database: %v", err)
+		log.Println(err)
 	}
 }
