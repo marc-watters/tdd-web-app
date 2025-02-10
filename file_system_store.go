@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"os"
 )
 
 type FileSystemPlayerStore struct {
@@ -11,14 +12,14 @@ type FileSystemPlayerStore struct {
 	league   League
 }
 
-func NewFileSystemPlayerStore(database io.ReadWriteSeeker) *FileSystemPlayerStore {
-	_, err := database.Seek(0, io.SeekStart)
+func NewFileSystemPlayerStore(file *os.File) *FileSystemPlayerStore {
+	_, err := file.Seek(0, io.SeekStart)
 	if err != nil {
 		log.Printf("unable to seek database: %v\n", err)
 	}
-	league, _ := NewLeague(database)
+	league, _ := NewLeague(file)
 	return &FileSystemPlayerStore{
-		database: &tape{database},
+		database: &tape{file},
 		league:   league,
 	}
 }
