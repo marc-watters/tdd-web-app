@@ -40,7 +40,7 @@ func TestGETPlayers(t *testing.T) {
 	server := NewPlayerServer(&store)
 
 	t.Run("return Pepper's score", func(t *testing.T) {
-		request := newGetScoreRequest("Pepper")
+		request := newGetScoreRequest(t, "Pepper")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -50,7 +50,7 @@ func TestGETPlayers(t *testing.T) {
 	})
 
 	t.Run("return Floyd's score", func(t *testing.T) {
-		request := newGetScoreRequest("Floyd")
+		request := newGetScoreRequest(t, "Floyd")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -60,7 +60,7 @@ func TestGETPlayers(t *testing.T) {
 	})
 
 	t.Run("return 404 on unknown players", func(t *testing.T) {
-		request := newGetScoreRequest("HeWhoShallNotBeNamed")
+		request := newGetScoreRequest(t, "HeWhoShallNotBeNamed")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -80,7 +80,7 @@ func TestStoreWins(t *testing.T) {
 	t.Run("returns accepted on POST", func(t *testing.T) {
 		player := "Pepper"
 
-		request := newPostWinRequest(player)
+		request := newPostWinRequest(t, player)
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -102,17 +102,17 @@ func TestLeague(t *testing.T) {
 	server := NewPlayerServer(&store)
 
 	t.Run("returns 200 on /league", func(t *testing.T) {
-		request, _ := http.NewRequest(http.MethodGet, "/league", nil)
+		request, err := http.NewRequest(http.MethodGet, "/league", nil)
+		assertNoError(t, err)
+
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
 
 		var got []Player
 
-		err := json.NewDecoder(response.Body).Decode(&got)
-		if err != nil {
-			t.Fatalf("unable to parse response from server %q into slice of Player, '%v'", response.Body, err)
-		}
+		err = json.NewDecoder(response.Body).Decode(&got)
+		assertNoError(t, err)
 
 		assertStatusCode(t, response.Code, http.StatusOK)
 	})
@@ -127,7 +127,7 @@ func TestLeague(t *testing.T) {
 		store := &StubPlayerStore{nil, nil, wantedLeague}
 		server := NewPlayerServer(store)
 
-		request := newLeagueRequest()
+		request := newLeagueRequest(t)
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -147,24 +147,26 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	database, cleanDatabase := createTempFile(t, `[]`)
 	defer cleanDatabase()
 
-	store := NewFileSystemPlayerStore(database)
+	store, err := NewFileSystemPlayerStore(database)
+	assertNoError(t, err)
+
 	server := NewPlayerServer(store)
 	player := "Pepper"
 
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(t, player))
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(t, player))
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(t, player))
 
 	t.Run("get score", func(t *testing.T) {
 		response := httptest.NewRecorder()
-		server.ServeHTTP(response, newGetScoreRequest(player))
+		server.ServeHTTP(response, newGetScoreRequest(t, player))
 		assertStatusCode(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "3")
 	})
 
 	t.Run("get league", func(t *testing.T) {
 		response := httptest.NewRecorder()
-		server.ServeHTTP(response, newLeagueRequest())
+		server.ServeHTTP(response, newLeagueRequest(t))
 		assertStatusCode(t, response.Code, http.StatusOK)
 
 		got := getLeagueFromResponse(t, response.Body)
@@ -175,18 +177,24 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	})
 }
 
-func newGetScoreRequest(name string) *http.Request {
-	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
+func newGetScoreRequest(t testing.TB, name string) *http.Request {
+	t.Helper()
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
+	assertNoError(t, err)
 	return req
 }
 
-func newPostWinRequest(name string) *http.Request {
-	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("/players/%s", name), nil)
+func newPostWinRequest(t testing.TB, name string) *http.Request {
+	t.Helper()
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("/players/%s", name), nil)
+	assertNoError(t, err)
 	return req
 }
 
-func newLeagueRequest() *http.Request {
-	req, _ := http.NewRequest(http.MethodGet, "/league", nil)
+func newLeagueRequest(t testing.TB) *http.Request {
+	t.Helper()
+	req, err := http.NewRequest(http.MethodGet, "/league", nil)
+	assertNoError(t, err)
 	return req
 }
 
