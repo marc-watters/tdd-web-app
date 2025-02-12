@@ -17,7 +17,7 @@ func TestCLI(t *testing.T) {
 	})
 
 	t.Run("record Chris win from user input", func(t *testing.T) {
-		in := strings.NewReader("Marc wins\n")
+		in := strings.NewReader("Chris wins\n")
 		playerStore := &StubPlayerStore{}
 
 		cli := &CLI{playerStore, in}
