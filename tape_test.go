@@ -6,19 +6,19 @@ import (
 )
 
 func TestTape(t *testing.T) {
-	file, clean := createTempFile(t, "12345")
+	file, clean := CreateTempFile(t, "12345")
 	defer clean()
 
 	tape := &tape{file}
 
 	_, err := tape.Write([]byte("abc"))
-	assertNoError(t, err)
+	AssertNoError(t, err)
 
 	_, err = file.Seek(0, io.SeekStart)
-	assertNoError(t, err)
+	AssertNoError(t, err)
 
 	newFileContents, err := io.ReadAll(file)
-	assertNoError(t, err)
+	AssertNoError(t, err)
 
 	got := string(newFileContents)
 	want := "abc"

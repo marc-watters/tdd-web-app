@@ -7,11 +7,11 @@ import (
 )
 
 func TestWinsRecordingAndRetrieval(t *testing.T) {
-	database, cleanDatabase := createTempFile(t, `[]`)
+	database, cleanDatabase := CreateTempFile(t, `[]`)
 	defer cleanDatabase()
 
 	store, err := NewFileSystemPlayerStore(database)
-	assertNoError(t, err)
+	AssertNoError(t, err)
 
 	server := NewPlayerServer(store)
 
@@ -24,7 +24,7 @@ func TestWinsRecordingAndRetrieval(t *testing.T) {
 	response := httptest.NewRecorder()
 	server.ServeHTTP(response, newGetScoreRequest(t, player))
 
-	assertStatusCode(t, response.Code, http.StatusOK)
+	AssertStatusCode(t, response.Code, http.StatusOK)
 
-	assertResponseBody(t, response.Body.String(), "3")
+	AssertResponseBody(t, response.Body.String(), "3")
 }
