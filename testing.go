@@ -45,12 +45,17 @@ func (s ScheduledAlert) String() string {
 }
 
 type SpyGame struct {
-	StartedWith  int
-	FinishedWith string
+	StartCalled     bool
+	StartCalledWith int
+	FinishedWith    string
 }
 
-func (s *SpyGame) Start(numberOfPlayers int) { s.StartedWith = numberOfPlayers }
-func (s *SpyGame) Finish(winner string)      { s.FinishedWith = winner }
+func (s *SpyGame) Start(numberOfPlayers int) {
+	s.StartCalled = true
+	s.StartCalledWith = numberOfPlayers
+}
+
+func (s *SpyGame) Finish(winner string) { s.FinishedWith = winner }
 
 func AssertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
 	t.Helper()

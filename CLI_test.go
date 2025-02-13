@@ -83,8 +83,21 @@ func TestCLI(t *testing.T) {
 			t.Errorf("\ngot: \t%q\nwant:\t%q", gotPrompt, wantPrompt)
 		}
 
-		if game.StartedWith != 7 {
-			t.Errorf("wanted Start called with 7 but got %d", game.StartedWith)
+		if game.StartCalledWith != 7 {
+			t.Errorf("wanted Start called with 7 but got %d", game.StartCalledWith)
+		}
+	})
+
+	t.Run("it prints an error when a non numeric value is entered and does not start the game", func(t *testing.T) {
+		stdout := &bytes.Buffer{}
+		in := strings.NewReader("NaN\n")
+		game := &poker.SpyGame{}
+
+		cli := poker.NewCLI(in, stdout, game)
+		cli.PlayPoker()
+
+		if game.StartCalled {
+			t.Errorf("game should not have started")
 		}
 	})
 }
