@@ -135,6 +135,12 @@ func assertMessagesSentToUser(t testing.TB, stdout *bytes.Buffer, messages ...st
 	}
 }
 
+func assertGameStartedWith(t testing.TB, game *poker.SpyGame, numberOfPlayersWanted int) {
+	t.Helper()
+	if game.StartCalledWith != numberOfPlayersWanted {
+		t.Errorf("wanted Start called with %d but got %d", numberOfPlayersWanted, game.StartCalledWith)
+	}
+}
 func userSends(messages ...string) io.Reader {
 	return strings.NewReader(strings.Join(messages, "\n"))
 }
