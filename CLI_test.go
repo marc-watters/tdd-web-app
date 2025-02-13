@@ -2,7 +2,6 @@ package poker_test
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -66,16 +65,7 @@ func TestCLI(t *testing.T) {
 			{100 * time.Minute, 8000},
 		}
 
-		for i, want := range cases {
-			t.Run(fmt.Sprint(want), func(t *testing.T) {
-				if len(blindAlerter.Alerts) <= i {
-					t.Fatalf("alert %d was not scheduled for %v", i, blindAlerter.Alerts)
-				}
-
-				got := blindAlerter.Alerts[i]
-				assertScheduledAlert(t, got, want)
-			})
-		}
+		checkSchedulingCases(cases, t, blindAlerter)
 	})
 
 	t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
@@ -100,5 +90,17 @@ func assertScheduledAlert(t testing.TB, got, want poker.ScheduledAlert) {
 	t.Helper()
 	if got != want {
 		t.Errorf("got %+v, want %+v", got, want)
+	}
+}
+
+func checkSchedulingCases(cases []poker.ScheduledAlert, t testing.TB, alerter *poker.SpyBlindAlerter) {
+	t.Helper()
+	for i, want := range cases {
+		if len(alerter.Alerts) <= i {
+			t.Fatalf("alert %d was not scheduled %v", i, alerter.Alerts)
+		}
+
+		got := alerter.Alerts[i]
+		assertScheduledAlert(t, got, want)
 	}
 }

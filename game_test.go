@@ -1,7 +1,6 @@
 package poker_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -29,16 +28,7 @@ func TestGame_Start(t *testing.T) {
 			{At: 100 * time.Minute, Amount: 8000},
 		}
 
-		for i, want := range cases {
-			t.Run(fmt.Sprint(want), func(t *testing.T) {
-				if len(blindAlerter.Alerts) <= i {
-					t.Fatalf("alert %d was not scheduled %v", i, blindAlerter.Alerts)
-				}
-
-				got := blindAlerter.Alerts[i]
-				assertScheduledAlert(t, got, want)
-			})
-		}
+		checkSchedulingCases(cases, t, blindAlerter)
 	})
 
 	t.Run("schedules alerts on game start for 7 players", func(t *testing.T) {
@@ -54,15 +44,6 @@ func TestGame_Start(t *testing.T) {
 			{At: 36 * time.Minute, Amount: 400},
 		}
 
-		for i, want := range cases {
-			t.Run(fmt.Sprint(want), func(t *testing.T) {
-				if len(blindAlerter.Alerts) <= i {
-					t.Fatalf("alert %d was not scheduled %v", i, blindAlerter.Alerts)
-				}
-
-				got := blindAlerter.Alerts[i]
-				assertScheduledAlert(t, got, want)
-			})
-		}
+		checkSchedulingCases(cases, t, blindAlerter)
 	})
 }
