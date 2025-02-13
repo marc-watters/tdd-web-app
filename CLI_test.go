@@ -102,6 +102,13 @@ func assertFinishCalledWith(t testing.TB, game *poker.SpyGame, winner string) {
 	}
 }
 
+func assertGameNotFinished(t testing.TB, game *poker.SpyGame) {
+	t.Helper()
+	if game.FinishCalled {
+		t.Errorf("game should not have finished")
+	}
+}
+
 func userSends(messages ...string) io.Reader {
 	return strings.NewReader(strings.Join(messages, "\n"))
 }
