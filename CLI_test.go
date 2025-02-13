@@ -71,17 +71,20 @@ func TestCLI(t *testing.T) {
 	t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
 		stdout := &bytes.Buffer{}
 		in := strings.NewReader("7\n")
-		blindAlerter := &poker.SpyBlindAlerter{}
-		game := poker.NewGame(blindAlerter, dummyPlayerStore)
+		game := &poker.SpyGame{}
 
 		cli := poker.NewCLI(in, stdout, game)
 		cli.PlayPoker()
 
-		got := stdout.String()
-		want := poker.PlayerPrompt
+		gotPrompt := stdout.String()
+		wantPrompt := poker.PlayerPrompt
 
-		if got != want {
-			t.Errorf("\ngot: \t%q\nwant:\t%q", got, want)
+		if gotPrompt != wantPrompt {
+			t.Errorf("\ngot: \t%q\nwant:\t%q", gotPrompt, wantPrompt)
+		}
+
+		if game.StartedWith != 7 {
+			t.Errorf("wanted Start called with 7 but got %d", game.StartedWith)
 		}
 	})
 }

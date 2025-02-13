@@ -44,6 +44,14 @@ func (s ScheduledAlert) String() string {
 	return fmt.Sprintf("%d chips at %v", s.Amount, s.At)
 }
 
+type SpyGame struct {
+	StartedWith  int
+	FinishedWith string
+}
+
+func (s *SpyGame) Start(numberOfPlayers int) { s.StartedWith = numberOfPlayers }
+func (s *SpyGame) Finish(winner string)      { s.FinishedWith = winner }
+
 func AssertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
 	t.Helper()
 
