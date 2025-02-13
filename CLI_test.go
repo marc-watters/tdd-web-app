@@ -18,7 +18,9 @@ var (
 
 func TestCLI(t *testing.T) {
 	t.Run("record Marc win from user input", func(t *testing.T) {
-		in := strings.NewReader("Marc wins\n")
+		in := &bytes.Buffer{}
+		in.WriteString( /* Enter number of players: */ "5\n")
+		in.WriteString( /* Record win */ "Marc wins\n")
 		playerStore := &poker.StubPlayerStore{}
 
 		cli := poker.NewCLI(playerStore, in, dummyStdOut, dummySpyBlindAlerter)
@@ -28,7 +30,9 @@ func TestCLI(t *testing.T) {
 	})
 
 	t.Run("record Chris win from user input", func(t *testing.T) {
-		in := strings.NewReader("Chris wins\n")
+		in := &bytes.Buffer{}
+		in.WriteString( /* Enter number of players: */ "5\n")
+		in.WriteString( /* Record win */ "Chris wins\n")
 		playerStore := &poker.StubPlayerStore{}
 
 		cli := poker.NewCLI(playerStore, in, dummyStdOut, dummySpyBlindAlerter)
@@ -38,7 +42,7 @@ func TestCLI(t *testing.T) {
 	})
 
 	t.Run("it schedules printing of blind values", func(t *testing.T) {
-		in := strings.NewReader("Marc wins\n")
+		in := strings.NewReader("5\n")
 		playerStore := &poker.StubPlayerStore{}
 		blindAlerter := &poker.SpyBlindAlerter{}
 
