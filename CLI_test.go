@@ -99,6 +99,13 @@ func TestCLI(t *testing.T) {
 		if game.StartCalled {
 			t.Errorf("game should not have started")
 		}
+
+		gotPrompt := stdout.String()
+		wantPrompt := poker.PlayerPrompt + "Invalid number of players entered"
+
+		if gotPrompt != wantPrompt {
+			t.Errorf("\ngot: \t%q\nwant:\t%q", gotPrompt, wantPrompt)
+		}
 	})
 }
 
