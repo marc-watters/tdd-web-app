@@ -1,6 +1,7 @@
 package poker
 
 import (
+	"fmt"
 	"net/http/httptest"
 	"os"
 	"reflect"
@@ -27,17 +28,20 @@ func (s *StubPlayerStore) GetLeague() League {
 }
 
 type SpyBlindAlerter struct {
-	Alerts []struct {
-		ScheduledAt time.Duration
-		Amount      int
-	}
+	Alerts []ScheduledAlert
 }
 
 func (s *SpyBlindAlerter) ScheduleAlertAt(duration time.Duration, amount int) {
-	s.Alerts = append(s.Alerts, struct {
-		ScheduledAt time.Duration
-		Amount      int
-	}{duration, amount})
+	s.Alerts = append(s.Alerts, ScheduledAlert{duration, amount})
+}
+
+type ScheduledAlert struct {
+	At     time.Duration
+	Amount int
+}
+
+func (s ScheduledAlert) String() string {
+	return fmt.Sprintf("%d chips at %v", s.Amount, s.At)
 }
 
 func AssertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
