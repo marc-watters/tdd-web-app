@@ -11,6 +11,15 @@ import (
 
 var dummySpyBlindAlerter = &poker.SpyBlindAlerter{}
 
+type scheduledAlert struct {
+	at     time.Duration
+	amount int
+}
+
+func (s scheduledAlert) String() string {
+	return fmt.Sprintf("%d chips at %v", s.amount, s.at)
+}
+
 func TestCLI(t *testing.T) {
 	t.Run("record Marc win from user input", func(t *testing.T) {
 		in := strings.NewReader("Marc wins\n")
