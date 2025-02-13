@@ -1,6 +1,7 @@
 package poker_test
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"testing"
@@ -9,7 +10,12 @@ import (
 	poker "webapp/v2"
 )
 
-var dummySpyBlindAlerter = &poker.SpyBlindAlerter{}
+var (
+	dummySpyBlindAlerter = &poker.SpyBlindAlerter{}
+	dummyPlayerStore     = &poker.StubPlayerStore{}
+	dummyStdIn           = &bytes.Buffer{}
+	dummyStdOut          = &bytes.Buffer{}
+)
 
 func TestCLI(t *testing.T) {
 	t.Run("record Marc win from user input", func(t *testing.T) {
@@ -63,6 +69,19 @@ func TestCLI(t *testing.T) {
 				got := blindAlerter.Alerts[i]
 				assertScheduledAlert(t, got, want)
 			})
+		}
+	})
+
+	t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
+		stdout := &bytes.Buffer{}
+		cli := poker.NewCLI(dummyPlayerStore, dummyStdIn, stdout, dummySpyBlindAlerter)
+		cli.PlayPoker()
+
+		got := stdout.String()
+		want := "Please enter the number of players: "
+
+		if got != want {
+			t.Errorf("\ngot: \t%q\nwant:\t%q", got, want)
 		}
 	})
 }
