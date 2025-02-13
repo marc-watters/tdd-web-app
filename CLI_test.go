@@ -17,17 +17,18 @@ var (
 )
 
 func TestCLI(t *testing.T) {
-	t.Run("record Marc win from user input", func(t *testing.T) {
-		in := &bytes.Buffer{}
-		in.WriteString( /* Enter number of players: */ "5\n")
-		in.WriteString( /* Record win */ "Marc wins\n")
-		playerStore := &poker.StubPlayerStore{}
-		game := poker.NewGame(dummySpyBlindAlerter, playerStore)
+	t.Run("start game with 3 players and finish game with 'Marc' as winner", func(t *testing.T) {
+		game := &poker.SpyGame{}
+		stdout := &bytes.Buffer{}
 
-		cli := poker.NewCLI(in, dummyStdOut, game)
+		in := userSends("3", "Marc wins")
+		cli := poker.NewCLI(in, stdout, game)
+
 		cli.PlayPoker()
 
-		poker.AssertPlayerWin(t, playerStore, "Marc")
+		assertMessagesSentToUser(t, stdout, poker.PlayerPrompt)
+		assertGameStartedWith(t, game, 3)
+		assertFinishCalledWith(t, game, "Marc")
 	})
 
 	t.Run("record Chris win from user input", func(t *testing.T) {
@@ -67,26 +68,6 @@ func TestCLI(t *testing.T) {
 		}
 
 		checkSchedulingCases(cases, t, blindAlerter)
-	})
-
-	t.Run("it prompts the user to enter the number of players", func(t *testing.T) {
-		stdout := &bytes.Buffer{}
-		in := strings.NewReader("7\n")
-		game := &poker.SpyGame{}
-
-		cli := poker.NewCLI(in, stdout, game)
-		cli.PlayPoker()
-
-		gotPrompt := stdout.String()
-		wantPrompt := poker.PlayerPrompt
-
-		if gotPrompt != wantPrompt {
-			t.Errorf("\ngot: \t%q\nwant:\t%q", gotPrompt, wantPrompt)
-		}
-
-		if game.StartCalledWith != 7 {
-			t.Errorf("wanted Start called with 7 but got %d", game.StartCalledWith)
-		}
 	})
 
 	t.Run("it prints an error when a non numeric value is entered and does not start the game", func(t *testing.T) {
