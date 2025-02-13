@@ -47,3 +47,12 @@ func TestGame_Start(t *testing.T) {
 		checkSchedulingCases(cases, t, blindAlerter)
 	})
 }
+
+func TestGame_Finish(t *testing.T) {
+	store := &poker.StubPlayerStore{}
+	game := poker.NewGame(dummySpyBlindAlerter, store)
+	winner := "Marc"
+
+	game.Finish(winner)
+	poker.AssertPlayerWin(t, store, winner)
+}
