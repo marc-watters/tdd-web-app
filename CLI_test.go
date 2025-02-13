@@ -141,6 +141,14 @@ func assertGameStartedWith(t testing.TB, game *poker.SpyGame, numberOfPlayersWan
 		t.Errorf("wanted Start called with %d but got %d", numberOfPlayersWanted, game.StartCalledWith)
 	}
 }
+
+func assertFinishCalledWith(t testing.TB, game *poker.SpyGame, winner string) {
+	t.Helper()
+	if game.FinishCalledWith != winner {
+		t.Errorf("expected finish called with %q but got %q", winner, game.FinishCalledWith)
+	}
+}
+
 func userSends(messages ...string) io.Reader {
 	return strings.NewReader(strings.Join(messages, "\n"))
 }
