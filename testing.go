@@ -5,6 +5,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 type StubPlayerStore struct {
@@ -23,6 +24,20 @@ func (s *StubPlayerStore) RecordWin(name string) {
 
 func (s *StubPlayerStore) GetLeague() League {
 	return s.League
+}
+
+type SpyBlindAlerter struct {
+	Alerts []struct {
+		ScheduledAt time.Duration
+		Amount      int
+	}
+}
+
+func (s *SpyBlindAlerter) ScheduleAlertAt(duration time.Duration, amount int) {
+	s.Alerts = append(s.Alerts, struct {
+		ScheduledAt time.Duration
+		Amount      int
+	}{duration, amount})
 }
 
 func AssertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
