@@ -41,7 +41,11 @@ func (cli *CLI) PlayPoker() {
 	cli.game.Start(numberOfPlayers)
 
 	winnerInput := cli.readLine()
-	winner := extractWinner(winnerInput)
+	winner, err := extractWinner(winnerInput)
+	if err != nil {
+		fmt.Fprint(cli.out, ErrWinnerInputMsg)
+		return
+	}
 
 	cli.game.Finish(winner)
 }
@@ -51,6 +55,9 @@ func (cli *CLI) readLine() string {
 	return cli.in.Text()
 }
 
-func extractWinner(userInput string) string {
-	return strings.Replace(userInput, " wins", "", 1)
+func extractWinner(userInput string) (string, error) {
+	if !strings.Contains(userInput, " wins") {
+		return "", fmt.Errorf("%s", ErrWinnerInputMsg)
+	}
+	return strings.Replace(userInput, " wins", "", 1), nil
 }
