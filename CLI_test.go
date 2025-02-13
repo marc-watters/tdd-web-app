@@ -2,6 +2,7 @@ package poker_test
 
 import (
 	"bytes"
+	"io"
 	"strings"
 	"testing"
 	"time"
@@ -132,4 +133,8 @@ func assertMessagesSentToUser(t testing.TB, stdout *bytes.Buffer, messages ...st
 	if got != want {
 		t.Errorf("got %q sent to stdout but expected %+v", got, messages)
 	}
+}
+
+func userSends(messages ...string) io.Reader {
+	return strings.NewReader(strings.Join(messages, "\n"))
 }
