@@ -40,4 +40,29 @@ func TestGame_Start(t *testing.T) {
 			})
 		}
 	})
+
+	t.Run("schedules alerts on game start for 7 players", func(t *testing.T) {
+		blindAlerter := &poker.SpyBlindAlerter{}
+		game := poker.NewGame(blindAlerter, dummyPlayerStore)
+
+		game.Start(7)
+
+		cases := []poker.ScheduledAlert{
+			{At: 0 * time.Second, Amount: 100},
+			{At: 12 * time.Minute, Amount: 200},
+			{At: 24 * time.Minute, Amount: 300},
+			{At: 36 * time.Minute, Amount: 400},
+		}
+
+		for i, want := range cases {
+			t.Run(fmt.Sprint(want), func(t *testing.T) {
+				if len(blindAlerter.Alerts) <= i {
+					t.Fatalf("alert %d was not scheduled %v", i, blindAlerter.Alerts)
+				}
+
+				got := blindAlerter.Alerts[i]
+				assertScheduledAlert(t, got, want)
+			})
+		}
+	})
 }

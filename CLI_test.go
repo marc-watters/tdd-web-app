@@ -93,24 +93,6 @@ func TestCLI(t *testing.T) {
 		if got != want {
 			t.Errorf("\ngot: \t%q\nwant:\t%q", got, want)
 		}
-
-		cases := []poker.ScheduledAlert{
-			{0 * time.Second, 100},
-			{12 * time.Minute, 200},
-			{24 * time.Minute, 300},
-			{36 * time.Minute, 400},
-		}
-
-		for i, want := range cases {
-			t.Run(fmt.Sprint(want), func(t *testing.T) {
-				if len(blindAlerter.Alerts) <= i {
-					t.Fatalf("alert %d was not scheduled %v", i, blindAlerter.Alerts)
-				}
-
-				got := blindAlerter.Alerts[i]
-				assertScheduledAlert(t, got, want)
-			})
-		}
 	})
 }
 
