@@ -101,7 +101,7 @@ func TestCLI(t *testing.T) {
 		}
 
 		gotPrompt := stdout.String()
-		wantPrompt := poker.PlayerPrompt + "Invalid number of players entered"
+		wantPrompt := poker.PlayerPrompt + poker.ErrPlayerInputMsg
 
 		if gotPrompt != wantPrompt {
 			t.Errorf("\ngot: \t%q\nwant:\t%q", gotPrompt, wantPrompt)
