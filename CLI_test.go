@@ -5,7 +5,6 @@ import (
 	"io"
 	"strings"
 	"testing"
-	"time"
 
 	poker "webapp/v2"
 )
@@ -31,43 +30,16 @@ func TestCLI(t *testing.T) {
 		assertFinishCalledWith(t, game, "Marc")
 	})
 
-	t.Run("record Chris win from user input", func(t *testing.T) {
-		in := &bytes.Buffer{}
-		in.WriteString( /* Enter number of players: */ "5\n")
-		in.WriteString( /* Record win */ "Chris wins\n")
-		playerStore := &poker.StubPlayerStore{}
-		game := poker.NewGame(dummySpyBlindAlerter, playerStore)
+	t.Run("start game with 8 players and record 'Cleo' as winner", func(t *testing.T) {
+		game := &poker.SpyGame{}
 
+		in := userSends("8", "Cleo wins")
 		cli := poker.NewCLI(in, dummyStdOut, game)
+
 		cli.PlayPoker()
 
-		poker.AssertPlayerWin(t, playerStore, "Chris")
-	})
-
-	t.Run("it schedules printing of blind values", func(t *testing.T) {
-		in := strings.NewReader("5\n")
-		playerStore := &poker.StubPlayerStore{}
-		blindAlerter := &poker.SpyBlindAlerter{}
-		game := poker.NewGame(blindAlerter, playerStore)
-
-		cli := poker.NewCLI(in, dummyStdOut, game)
-		cli.PlayPoker()
-
-		cases := []poker.ScheduledAlert{
-			{0 * time.Second, 100},
-			{10 * time.Minute, 200},
-			{20 * time.Minute, 300},
-			{30 * time.Minute, 400},
-			{40 * time.Minute, 500},
-			{50 * time.Minute, 600},
-			{60 * time.Minute, 800},
-			{70 * time.Minute, 1000},
-			{80 * time.Minute, 2000},
-			{90 * time.Minute, 4000},
-			{100 * time.Minute, 8000},
-		}
-
-		checkSchedulingCases(cases, t, blindAlerter)
+		assertGameStartedWith(t, game, 8)
+		assertFinishCalledWith(t, game, "Cleo")
 	})
 
 	t.Run("it prints an error when a non numeric value is entered and does not start the game", func(t *testing.T) {
