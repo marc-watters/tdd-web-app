@@ -7,12 +7,14 @@ import (
 	poker "webapp/v2"
 )
 
+var dummySpyBlindAlerter = &poker.SpyBlindAlerter{}
+
 func TestCLI(t *testing.T) {
 	t.Run("record Marc win from user input", func(t *testing.T) {
 		in := strings.NewReader("Marc wins\n")
 		playerStore := &poker.StubPlayerStore{}
 
-		cli := poker.NewCLI(playerStore, in)
+		cli := poker.NewCLI(playerStore, in, dummySpyBlindAlerter)
 		cli.PlayPoker()
 
 		poker.AssertPlayerWin(t, playerStore, "Marc")
@@ -22,7 +24,7 @@ func TestCLI(t *testing.T) {
 		in := strings.NewReader("Chris wins\n")
 		playerStore := &poker.StubPlayerStore{}
 
-		cli := poker.NewCLI(playerStore, in)
+		cli := poker.NewCLI(playerStore, in, dummySpyBlindAlerter)
 		cli.PlayPoker()
 
 		poker.AssertPlayerWin(t, playerStore, "Chris")
