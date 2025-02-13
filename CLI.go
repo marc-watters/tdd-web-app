@@ -25,6 +25,7 @@ func NewCLI(in io.Reader, out io.Writer, game Game) *CLI {
 const (
 	PlayerPrompt      = "Please enter the number of players: "
 	ErrPlayerInputMsg = "bad value received for number of players, please try again with a number"
+	ErrWinnerInputMsg = "bad value received for winner,expect format of 'PlayerName wins'"
 )
 
 func (cli *CLI) PlayPoker() {

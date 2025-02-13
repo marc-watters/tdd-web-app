@@ -57,6 +57,19 @@ func TestCLI(t *testing.T) {
 		wantPrompt := poker.PlayerPrompt + poker.ErrPlayerInputMsg
 		assertMessagesSentToUser(t, stdout, wantPrompt)
 	})
+
+	t.Run("it prints an error when the winner is declared incorrectly", func(t *testing.T) {
+		game := &poker.SpyGame{}
+		stdout := &bytes.Buffer{}
+
+		in := userSends("8", "Lloyd is a killer")
+		cli := poker.NewCLI(in, stdout, game)
+
+		cli.PlayPoker()
+
+		assertGameNotFinished(t, game)
+		assertMessagesSentToUser(t, stdout, poker.PlayerPrompt, poker.ErrWinnerInputMsg)
+	})
 }
 
 func assertScheduledAlert(t testing.TB, got, want poker.ScheduledAlert) {
