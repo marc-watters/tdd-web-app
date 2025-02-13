@@ -78,7 +78,7 @@ func TestCLI(t *testing.T) {
 		cli.PlayPoker()
 
 		got := stdout.String()
-		want := "Please enter the number of players: "
+		want := poker.PlayerPrompt
 
 		if got != want {
 			t.Errorf("\ngot: \t%q\nwant:\t%q", got, want)
