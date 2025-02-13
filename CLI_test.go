@@ -100,12 +100,8 @@ func TestCLI(t *testing.T) {
 			t.Errorf("game should not have started")
 		}
 
-		gotPrompt := stdout.String()
 		wantPrompt := poker.PlayerPrompt + poker.ErrPlayerInputMsg
-
-		if gotPrompt != wantPrompt {
-			t.Errorf("\ngot: \t%q\nwant:\t%q", gotPrompt, wantPrompt)
-		}
+		assertMessagesSentToUser(t, stdout, wantPrompt)
 	})
 }
 
@@ -125,5 +121,15 @@ func checkSchedulingCases(cases []poker.ScheduledAlert, t testing.TB, alerter *p
 
 		got := alerter.Alerts[i]
 		assertScheduledAlert(t, got, want)
+	}
+}
+
+func assertMessagesSentToUser(t testing.TB, stdout *bytes.Buffer, messages ...string) {
+	t.Helper()
+	got := stdout.String()
+	want := strings.Join(messages, "")
+
+	if got != want {
+		t.Errorf("got %q sent to stdout but expected %+v", got, messages)
 	}
 }
