@@ -3,8 +3,10 @@ package poker
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -97,8 +99,19 @@ func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("problem upgrading to websocket connection: %s", err.Error()), http.StatusInternalServerError)
 	}
 
-	_, winnerMsg, _ := conn.ReadMessage()
-	p.store.RecordWin(string(winnerMsg))
+	_, numberOfPlayersMsg, _ := conn.ReadMessage()
+	numberOfPlayers, err := strconv.Atoi(string(numberOfPlayersMsg))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("problem parsing number of players input: %s", err.Error()), http.StatusInternalServerError)
+	}
+	p.game.Start(numberOfPlayers, io.Discard) // TODO: Don't discard the blind message!
+
+	_, winnerMsg, err := conn.ReadMessage()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("problem parsing winner: %s", err.Error()), http.StatusInternalServerError)
+	}
+
+	p.game.Finish(string(winnerMsg))
 }
 
 func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
