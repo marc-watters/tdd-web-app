@@ -26,7 +26,7 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		AssertStatusCode(t, response.Code, http.StatusOK)
+		AssertStatusCode(t, response, http.StatusOK)
 		AssertResponseBody(t, response.Body.String(), "20")
 	})
 
@@ -36,7 +36,7 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		AssertStatusCode(t, response.Code, http.StatusOK)
+		AssertStatusCode(t, response, http.StatusOK)
 		AssertResponseBody(t, response.Body.String(), "10")
 	})
 
@@ -46,7 +46,7 @@ func TestGETPlayers(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		AssertStatusCode(t, response.Code, http.StatusNotFound)
+		AssertStatusCode(t, response, http.StatusNotFound)
 	})
 }
 
@@ -66,7 +66,7 @@ func TestStoreWins(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
-		AssertStatusCode(t, response.Code, http.StatusAccepted)
+		AssertStatusCode(t, response, http.StatusAccepted)
 		AssertPlayerWin(t, &store, player)
 	})
 }
@@ -88,7 +88,7 @@ func TestLeague(t *testing.T) {
 		err = json.NewDecoder(response.Body).Decode(&got)
 		AssertNoError(t, err)
 
-		AssertStatusCode(t, response.Code, http.StatusOK)
+		AssertStatusCode(t, response, http.StatusOK)
 	})
 
 	t.Run("returns the league table as JSON", func(t *testing.T) {
@@ -107,7 +107,7 @@ func TestLeague(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		got := getLeagueFromResponse(t, response.Body)
-		AssertStatusCode(t, response.Code, http.StatusOK)
+		AssertStatusCode(t, response, http.StatusOK)
 		AssertContentType(t, response, jsonContentType)
 		AssertLeague(t, got, wantedLeague)
 
@@ -134,14 +134,14 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	t.Run("get score", func(t *testing.T) {
 		response := httptest.NewRecorder()
 		server.ServeHTTP(response, newGetScoreRequest(t, player))
-		AssertStatusCode(t, response.Code, http.StatusOK)
+		AssertStatusCode(t, response, http.StatusOK)
 		AssertResponseBody(t, response.Body.String(), "3")
 	})
 
 	t.Run("get league", func(t *testing.T) {
 		response := httptest.NewRecorder()
 		server.ServeHTTP(response, newLeagueRequest(t))
-		AssertStatusCode(t, response.Code, http.StatusOK)
+		AssertStatusCode(t, response, http.StatusOK)
 
 		got := getLeagueFromResponse(t, response.Body)
 		want := []Player{
@@ -159,7 +159,7 @@ func TestGame(t *testing.T) {
 
 	server.ServeHTTP(response, request)
 
-	AssertStatusCode(t, response.Code, http.StatusOK)
+	AssertStatusCode(t, response, http.StatusOK)
 }
 
 func newGetScoreRequest(t testing.TB, name string) *http.Request {
