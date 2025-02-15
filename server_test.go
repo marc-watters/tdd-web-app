@@ -154,7 +154,7 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 func TestGame(t *testing.T) {
 	server := NewPlayerServer(&StubPlayerStore{})
 
-	request, _ := http.NewRequest(http.MethodGet, "/game", nil)
+	request := newGameRequest(t)
 	response := httptest.NewRecorder()
 
 	server.ServeHTTP(response, request)
@@ -190,4 +190,10 @@ func getLeagueFromResponse(t testing.TB, body io.Reader) (league []Player) {
 		t.Fatalf("unable to parse response from server %q into slice of PLayer, '%v'", body, err)
 	}
 	return
+}
+
+func newGameRequest(t testing.TB) *http.Request {
+	request, err := http.NewRequest(http.MethodGet, "/game", nil)
+	AssertNoError(t, err)
+	return request
 }
