@@ -80,10 +80,13 @@ func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
-	_, err := upgrader.Upgrade(w, r, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("problem upgrading to websocket connection: %s", err.Error()), http.StatusInternalServerError)
 	}
+
+	_, winnerMsg, _ := conn.ReadMessage()
+	p.store.RecordWin(string(winnerMsg))
 }
 
 func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
