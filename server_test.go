@@ -238,3 +238,10 @@ func mustDialWS(t *testing.T, url string) *websocket.Conn {
 	}
 	return ws
 }
+
+func writeWSMessage(t *testing.T, conn *websocket.Conn, message string) {
+	t.Helper()
+	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+		t.Fatalf("could not send message over ws connection: %v", err)
+	}
+}
