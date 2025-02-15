@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"text/template"
+
+	"github.com/gorilla/websocket"
 )
 
 type Player struct {
@@ -33,6 +35,7 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 	router.Handle("/league", http.HandlerFunc(p.leagueHandler))
 	router.Handle("/players/", http.HandlerFunc(p.playersHandler))
 	router.Handle("/game", http.HandlerFunc(p.gameHandler))
+	router.Handle("/ws", http.HandlerFunc(p.wsHandler))
 
 	p.Handler = router
 
@@ -69,6 +72,17 @@ func (p *PlayerServer) gameHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := tmpl.Execute(w, nil); err != nil {
 		http.Error(w, fmt.Sprintf("problem executing template: %s", err.Error()), http.StatusInternalServerError)
+	}
+}
+
+func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+	_, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("problem upgrading to websocket connection: %s", err.Error()), http.StatusInternalServerError)
 	}
 }
 
