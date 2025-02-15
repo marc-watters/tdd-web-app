@@ -13,7 +13,8 @@ func TestWinsRecordingAndRetrieval(t *testing.T) {
 	store, err := NewFileSystemPlayerStore(database)
 	AssertNoError(t, err)
 
-	server := NewPlayerServer(store)
+	server, err := NewPlayerServer(store)
+	AssertNoError(t, err)
 
 	player := "Pepper"
 

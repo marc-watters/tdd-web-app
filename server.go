@@ -23,12 +23,23 @@ type PlayerStore interface {
 }
 
 type PlayerServer struct {
-	store PlayerStore
 	http.Handler
+
+	store    PlayerStore
+	template *template.Template
 }
 
-func NewPlayerServer(store PlayerStore) *PlayerServer {
+const htmlTemplatePath = "game.html"
+
+func NewPlayerServer(store PlayerStore) (*PlayerServer, error) {
 	p := new(PlayerServer)
+
+	tmpl, err := template.ParseFiles(htmlTemplatePath)
+	if err != nil {
+		return nil, fmt.Errorf("problem opening %s: %v", htmlTemplatePath, err)
+	}
+
+	p.template = tmpl
 	p.store = store
 
 	router := http.NewServeMux()
@@ -39,7 +50,7 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 
 	p.Handler = router
 
-	return p
+	return p, nil
 }
 
 const jsonContentType = "application/json"
