@@ -151,6 +151,17 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	})
 }
 
+func TestGame(t *testing.T) {
+	server := NewPlayerServer(&StubPlayerStore{})
+
+	request, _ := http.NewRequest(http.MethodGet, "/game", nil)
+	response := httptest.NewRecorder()
+
+	server.ServeHTTP(response, request)
+
+	AssertStatusCode(t, response.Code, http.StatusOK)
+}
+
 func newGetScoreRequest(t testing.TB, name string) *http.Request {
 	t.Helper()
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
