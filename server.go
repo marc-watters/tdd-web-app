@@ -27,13 +27,14 @@ type PlayerStore interface {
 type PlayerServer struct {
 	http.Handler
 
+	game     Game
 	store    PlayerStore
 	template *template.Template
 }
 
 const htmlTemplatePath = "game.html"
 
-func NewPlayerServer(store PlayerStore) (*PlayerServer, error) {
+func NewPlayerServer(store PlayerStore, game Game) (*PlayerServer, error) {
 	p := new(PlayerServer)
 
 	tmpl, err := template.ParseFiles(htmlTemplatePath)
@@ -43,6 +44,7 @@ func NewPlayerServer(store PlayerStore) (*PlayerServer, error) {
 
 	p.template = tmpl
 	p.store = store
+	p.game = game
 
 	router := http.NewServeMux()
 	router.Handle("/league", http.HandlerFunc(p.leagueHandler))

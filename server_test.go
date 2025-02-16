@@ -225,7 +225,7 @@ func newGameRequest(t testing.TB) *http.Request {
 }
 
 func mustMakePlayerServer(t *testing.T, store poker.PlayerStore, game poker.Game) *poker.PlayerServer {
-	server, err := poker.NewPlayerServer(store)
+	server, err := poker.NewPlayerServer(store, game)
 	if err != nil {
 		t.Fatal("problem creating player server", err)
 	}
