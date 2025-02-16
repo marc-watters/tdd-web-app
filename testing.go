@@ -3,6 +3,7 @@ package poker
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http/httptest"
 	"os"
 	"reflect"
@@ -55,9 +56,13 @@ type SpyGame struct {
 	FinishCalledWith string
 }
 
-func (s *SpyGame) Start(numberOfPlayers int, alertsDestination io.Writer) {
+func (s *SpyGame) Start(numberOfPlayers int, out io.Writer) {
 	s.StartCalled = true
 	s.StartCalledWith = numberOfPlayers
+	_, err := out.Write(s.BlindAlert)
+	if err != nil {
+		log.Printf("error writing to out: %v", err)
+	}
 }
 
 func (s *SpyGame) Finish(winner string) {
