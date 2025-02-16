@@ -15,7 +15,10 @@ import (
 	poker "webapp/v2"
 )
 
-var dummyGame = &poker.SpyGame{}
+var (
+	dummyGame = &poker.SpyGame{}
+	tenMS     = time.Duration(10 * time.Millisecond)
+)
 
 func TestGETPlayers(t *testing.T) {
 	store := poker.StubPlayerStore{
@@ -185,9 +188,9 @@ func TestGame(t *testing.T) {
 		writeWSMessage(t, ws, "3")
 		writeWSMessage(t, ws, winner)
 
-		time.Sleep(10 * time.Millisecond)
 		assertGameStartedWith(t, dummyGame, 3)
 		assertFinishCalledWith(t, dummyGame, winner)
+		time.Sleep(tenMS)
 
 		_, gotBlindAlert, _ := ws.ReadMessage()
 		if string(gotBlindAlert) != wantedBlindAlert {
