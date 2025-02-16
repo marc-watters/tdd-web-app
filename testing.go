@@ -46,8 +46,11 @@ func (s ScheduledAlert) String() string {
 }
 
 type SpyGame struct {
-	StartCalled      bool
-	StartCalledWith  int
+	StartCalled     bool
+	StartCalledWith int
+
+	BlindAlert []byte
+
 	FinishCalled     bool
 	FinishCalledWith string
 }
