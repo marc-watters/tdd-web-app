@@ -270,3 +270,10 @@ func within(t testing.TB, d time.Duration, assert func()) {
 
 	}
 }
+
+func assertWebsocketGotMsg(t *testing.T, ws *websocket.Conn, want string) {
+	_, msg, _ := ws.ReadMessage()
+	if string(msg) != want {
+		t.Errorf("\ngot: \t%s\nwant:\t%s", string(msg), want)
+	}
+}
