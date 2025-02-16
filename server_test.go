@@ -188,14 +188,11 @@ func TestGame(t *testing.T) {
 		writeWSMessage(t, ws, "3")
 		writeWSMessage(t, ws, winner)
 
-		assertGameStartedWith(t, dummyGame, 3)
-		assertFinishCalledWith(t, dummyGame, winner)
 		time.Sleep(tenMS)
+		assertGameStartedWith(t, game, 3)
+		assertFinishCalledWith(t, game, winner)
 
-		_, gotBlindAlert, _ := ws.ReadMessage()
-		if string(gotBlindAlert) != wantedBlindAlert {
-			t.Errorf("got blind alert %q, want %q", string(gotBlindAlert), wantedBlindAlert)
-		}
+		within(t, tenMS, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
 	})
 }
 
