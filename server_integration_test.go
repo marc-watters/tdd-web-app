@@ -1,20 +1,22 @@
-package poker
+package poker_test
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	poker "webapp/v2"
 )
 
 func TestWinsRecordingAndRetrieval(t *testing.T) {
-	database, cleanDatabase := CreateTempFile(t, `[]`)
+	database, cleanDatabase := poker.CreateTempFile(t, `[]`)
 	defer cleanDatabase()
 
-	store, err := NewFileSystemPlayerStore(database)
-	AssertNoError(t, err)
+	store, err := poker.NewFileSystemPlayerStore(database)
+	poker.AssertNoError(t, err)
 
-	server, err := NewPlayerServer(store)
-	AssertNoError(t, err)
+	server, err := poker.NewPlayerServer(store)
+	poker.AssertNoError(t, err)
 
 	player := "Pepper"
 
@@ -25,7 +27,7 @@ func TestWinsRecordingAndRetrieval(t *testing.T) {
 	response := httptest.NewRecorder()
 	server.ServeHTTP(response, newGetScoreRequest(t, player))
 
-	AssertStatusCode(t, response, http.StatusOK)
+	poker.AssertStatusCode(t, response, http.StatusOK)
 
-	AssertResponseBody(t, response.Body.String(), "3")
+	poker.AssertResponseBody(t, response.Body.String(), "3")
 }
