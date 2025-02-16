@@ -1,24 +1,26 @@
-package poker
+package poker_test
 
 import (
 	"io"
 	"testing"
+
+	poker "webapp/v2"
 )
 
 func TestTape(t *testing.T) {
-	file, clean := CreateTempFile(t, "12345")
+	file, clean := poker.CreateTempFile(t, "12345")
 	defer clean()
 
-	tape := &tape{file}
+	tape := &poker.Tape{file}
 
 	_, err := tape.Write([]byte("abc"))
-	AssertNoError(t, err)
+	poker.AssertNoError(t, err)
 
 	_, err = file.Seek(0, io.SeekStart)
-	AssertNoError(t, err)
+	poker.AssertNoError(t, err)
 
 	newFileContents, err := io.ReadAll(file)
-	AssertNoError(t, err)
+	poker.AssertNoError(t, err)
 
 	got := string(newFileContents)
 	want := "abc"
