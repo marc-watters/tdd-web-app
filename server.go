@@ -142,3 +142,11 @@ func newPlayerServerWS(w http.ResponseWriter, r *http.Request) *playerServerWS {
 	}
 	return &playerServerWS{conn}
 }
+
+func (w *playerServerWS) WaitForMsg() string {
+	_, msg, err := w.ReadMessage()
+	if err != nil {
+		log.Printf("error reading into websocket: %v\n", err)
+	}
+	return string(msg)
+}
