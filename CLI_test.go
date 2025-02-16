@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 	"testing"
+	"time"
 
 	poker "webapp/v2"
 )
@@ -110,7 +111,12 @@ func assertGameStartedWith(t testing.TB, game *poker.SpyGame, numberOfPlayersWan
 
 func assertFinishCalledWith(t testing.TB, game *poker.SpyGame, winner string) {
 	t.Helper()
-	if game.FinishCalledWith != winner {
+
+	passed := retryUntil(500*time.Millisecond, func() bool {
+		return game.FinishCalledWith == winner
+	})
+
+	if !passed {
 		t.Errorf("expected finish called with %q but got %q", winner, game.FinishCalledWith)
 	}
 }
@@ -124,4 +130,14 @@ func assertGameNotFinished(t testing.TB, game *poker.SpyGame) {
 
 func userSends(messages ...string) io.Reader {
 	return strings.NewReader(strings.Join(messages, "\n"))
+}
+
+func retryUntil(d time.Duration, f func() bool) bool {
+	deadline := time.Now().Add(d)
+	for time.Now().Before(deadline) {
+		if f() {
+			return true
+		}
+	}
+	return false
 }
