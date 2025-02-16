@@ -90,11 +90,6 @@ func (p *PlayerServer) gameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var wsUpgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
 func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := wsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -133,4 +128,17 @@ func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
 
 type playerServerWS struct {
 	*websocket.Conn
+}
+
+var wsUpgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
+func newPlayerServerWS(w http.ResponseWriter, r *http.Request) *playerServerWS {
+	conn, err := wsUpgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("problem upgrading connection to WebSocket: %v\n", err)
+	}
+	return &playerServerWS{conn}
 }
