@@ -130,3 +130,7 @@ func (p *PlayerServer) processWin(w http.ResponseWriter, player string) {
 	p.store.RecordWin(player)
 	w.WriteHeader(http.StatusAccepted)
 }
+
+type playerServerWS struct {
+	*websocket.Conn
+}
