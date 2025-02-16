@@ -91,23 +91,15 @@ func (p *PlayerServer) gameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *PlayerServer) wsHandler(w http.ResponseWriter, r *http.Request) {
-	conn, err := wsUpgrader.Upgrade(w, r, nil)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("problem upgrading to websocket connection: %s", err.Error()), http.StatusInternalServerError)
-	}
-
-	_, numberOfPlayersMsg, _ := conn.ReadMessage()
+	ws := newPlayerServerWS(w, r)
+	numberOfPlayersMsg := ws.WaitForMsg()
 	numberOfPlayers, err := strconv.Atoi(string(numberOfPlayersMsg))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("problem parsing number of players input: %s", err.Error()), http.StatusInternalServerError)
 	}
 	p.game.Start(numberOfPlayers, io.Discard) // TODO: Don't discard the blind message!
 
-	_, winnerMsg, err := conn.ReadMessage()
-	if err != nil {
-		http.Error(w, fmt.Sprintf("problem parsing winner: %s", err.Error()), http.StatusInternalServerError)
-	}
-
+	winnerMsg := ws.WaitForMsg()
 	p.game.Finish(string(winnerMsg))
 }
 
